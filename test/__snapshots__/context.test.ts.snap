@@ -1,0 +1,15 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`context > should transform fullAttr.vue 1`] = `
+"<template>
+  <div  is-link=\\"true\\" ></div>
+</template>
+"
+`;
+
+exports[`context > should transform noDefault.vue 1`] = `
+"<template>
+  <div  is-link=\\"true\\"></div>
+</template>
+"
+`;
