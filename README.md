@@ -1,7 +1,12 @@
 # vite-plugin-uni-platform-modifier
 
-为属性、指令提供平台修饰符并按需编译
+<a href="https://github.com/uni-helper/vite-plugin-uni-platform-modifier/stargazers"><img src="https://img.shields.io/github/stars/uni-helper/vite-plugin-uni-platform-modifier?colorA=005947&colorB=eee&style=for-the-badge"></a>
+<a href="https://www.npmjs.com/package/@uni-helper/vite-plugin-uni-platform-modifier"><img src="https://img.shields.io/npm/dm/@uni-helper/vite-plugin-uni-platform-modifier?colorA=005947&colorB=eee&style=for-the-badge"></a>
+<a href="https://www.npmjs.com/package/@uni-helper/vite-plugin-uni-platform-modifier"><img src="https://img.shields.io/npm/v/@uni-helper/vite-plugin-uni-platform-modifier?colorA=005947&colorB=eee&style=for-the-badge"></a>
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/uni-helper/vite-plugin-uni-platform-modifier)
+
+> 为属性、指令提供平台修饰符并按需编译
 
 ## 安装
 
@@ -74,9 +79,7 @@ export default defineConfig({
 ```
 </details>
 
-
 ### 支持的修饰符
-
 
 ```js
 ['app', 'app-plus', 'h5', 'mp-360', 'mp-alipay', 'mp-baidu', 'mp-jd', 'mp-kuaishou', 'mp-lark', 'mp-qq', 'mp-toutiao', 'mp-weixin', 'quickapp-webview', 'quickapp-webview-huawei', 'quickapp-webview-union']
