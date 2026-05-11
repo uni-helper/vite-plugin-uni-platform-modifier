@@ -1,6 +1,6 @@
-import { builtInPlatforms, platform } from '@uni-helper/uni-env'
 import type { AttributeNode, DirectiveNode, ParentNode, RootNode, TemplateChildNode } from '@vue/compiler-core'
 import type MagicString from 'magic-string'
+import { builtInPlatforms, platform } from '@uni-helper/uni-env'
 import { createLogger } from 'vite'
 import { pluginName } from './constants'
 

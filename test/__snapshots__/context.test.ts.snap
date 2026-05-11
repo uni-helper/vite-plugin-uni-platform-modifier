@@ -2,14 +2,14 @@
 
 exports[`context > should transform fullAttr.vue 1`] = `
 "<template>
-  <div  is-link=\\"true\\" ></div>
+  <div  is-link="true"  />
 </template>
 "
 `;
 
 exports[`context > should transform noDefault.vue 1`] = `
 "<template>
-  <div  is-link=\\"true\\"></div>
+  <div  is-link="true" />
 </template>
 "
 `;

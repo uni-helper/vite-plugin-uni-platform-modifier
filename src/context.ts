@@ -1,7 +1,7 @@
-import { createFilter } from 'vite'
-
 import { parse } from '@vue/compiler-dom'
+
 import MagicString from 'magic-string'
+import { createFilter } from 'vite'
 import { getRootTemplate, transformProps } from './utils'
 
 export class Context {

@@ -14,10 +14,10 @@ pnpm i -D @uni-helper/vite-plugin-uni-platform-modifier
 ### 配置
 
 ```ts
-// vite.config.ts
-import { defineConfig } from 'vite'
 import Uni from '@dcloudio/vite-plugin-uni'
 import UniPlatformModifier from '@uni-helper/vite-plugin-uni-platform-modifier'
+// vite.config.ts
+import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [Uni(), UniPlatformModifier()],

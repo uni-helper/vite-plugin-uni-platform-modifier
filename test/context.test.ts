@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { relative, resolve } from 'node:path'
-import { describe, expect, it, vi } from 'vitest'
 import fg from 'fast-glob'
+import { describe, expect, it, vi } from 'vitest'
 import { Context } from '../src/context'
 
 vi.mock('@uni-helper/uni-env', () => {

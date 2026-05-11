@@ -1,6 +1,6 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { TemplateNode } from '@vue/compiler-core'
 import type { Prop } from '../src/utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { computedPropSource, getRootTemplate, groupPropsByName, hasMultiplePlatformProps, hasPlatformModifier, logger, normalizeVueProps } from '../src/utils'
 
 describe('hasPlatformModifier', () => {
