@@ -4,8 +4,8 @@
 
 ## 前置条件
 
-- [Node.js](https://nodejs.org/) 24（见仓库根目录 `.node-version`）
-- [pnpm](https://pnpm.io/) 10.33.4（见根 `package.json` 的 `packageManager` 字段）
+- [Node.js](https://nodejs.org/) 26（见仓库根目录 `.node-version`）
+- [pnpm](https://pnpm.io/) 12.14.0（见根 `package.json` 的 `packageManager` 字段）
 
 ## 常用命令
 
@@ -30,6 +30,9 @@ pnpm coverage
 # 代码检查
 pnpm lint
 pnpm lint:fix
+
+# 类型检查
+pnpm typecheck
 ```
 
 `playground` 是一个示例 uni-app 项目，`vite.config.ts` 直接 import `../src/index`，调试插件不需要先 `pnpm build`：
@@ -49,12 +52,12 @@ pnpm -C playground dev:mp-weixin
 ```shell
 test/
 ├── utils.test.ts     src/utils.ts 各工具函数的单元测试
-├── context.test.ts   transform 端到端测试：mock 掉 @uni-helper/uni-env（platform 固定为 mp-weixin），遍历 fixtures/*.vue 生成快照
+├── context.test.ts   transform 端到端测试：遍历 fixtures/*.vue 生成快照
 ├── fixtures/         模板样例（*.vue）
 └── __snapshots__/    快照文件
 ```
 
-`context.test.ts` 通过 `vi.mock` 固定平台环境，测试结果与真实 `UNI_PLATFORM` 无关。插件输出变化导致快照失败时，先确认新输出正确，再运行 `pnpm test -u` 更新快照。
+两个测试文件都通过 `vi.mock` 固定 `@uni-helper/uni-env`（platform 固定为 mp-weixin），测试结果与真实 `UNI_PLATFORM` 无关。插件输出变化导致快照失败时，先确认新输出正确，再运行 `pnpm test -u` 更新快照。
 
 ## 项目结构
 
@@ -74,7 +77,7 @@ vite-plugin-uni-platform-modifier/
 ## Pull Request 指南
 
 - 一个 PR 解决一个问题，不要夹带无关改动。
-- 提 PR 前在本地跑一遍 `pnpm build`、`pnpm lint`、`pnpm test`。
+- 提 PR 前在本地跑一遍 `pnpm build`、`pnpm lint`、`pnpm typecheck`、`pnpm test`。
 - CI（`.github/workflows/ci.yml`）在 push 和 PR 到 `main` 时运行，矩阵为 ubuntu / macos / windows × Node 22 / 24 / 26。
 - 改动插件行为、导出名或支持的修饰符时，同步更新 README。
 - 新增插件选项、重构模块这类改动，先开 issue 讨论方案再动手。

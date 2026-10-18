@@ -46,7 +46,7 @@ pnpm release                    # bumpp：改版本、提交、打 v* tag 并推
 
 | 路径 | 职责 |
 | --- | --- |
-| `src/index.ts` | Vite 插件入口：`enforce: 'pre'`，`transform` 钩子里交给 `Context` |
+| `src/index.ts` | Vite 插件入口：导出 `VitePluginUniPlatformModifier`（命名 + 默认，0.2.0 起更名，旧名已移除）；`enforce: 'pre'`，`configResolved` 把解析后的 vite logger 注入 utils（尊重用户 `logLevel` / `customLogger`），`transform` 钩子里交给 `Context` |
 | `src/context.ts` | `Context`：`createFilter('**/*.?(nu)vue')` 只放行 `.vue` / `.nuvue`；`parse` → 取根 `template` → `transformProps` → 有变更才返回 `{ code, map }` |
 | `src/utils.ts` | 核心改写逻辑（见下） |
 | `src/constants.ts` | `pluginName` |

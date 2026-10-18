@@ -47,6 +47,14 @@ export default defineConfig({
 })
 ```
 
+也提供命名导出，两种引入方式等价：
+
+```ts
+import { VitePluginUniPlatformModifier } from '@uni-helper/vite-plugin-uni-platform-modifier'
+```
+
+> 自 0.2.0 起，插件工厂函数更名为 `VitePluginUniPlatformModifier`（旧名 `VitePluginUniPlatformVOnModifier` 系笔误，已移除）。
+
 ### 编写代码
 
 ```html
