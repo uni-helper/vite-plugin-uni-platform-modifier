@@ -48,7 +48,7 @@ jobs:
 
       - name: Typecheck
         run: pnpm run typecheck
-    
+
       - name: Build Playground h5
         run: pnpm run build:play:h5
 
