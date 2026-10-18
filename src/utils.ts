@@ -2,6 +2,7 @@ import type { AttributeNode, DirectiveNode, ElementNode, ParentNode, RootNode, S
 import type MagicString from 'magic-string'
 import type { Logger, LogOptions } from 'vite'
 import { builtInPlatforms, platform } from '@uni-helper/uni-env'
+import { NodeTypes } from '@vue/compiler-core'
 import { createLogger } from 'vite'
 import { pluginName } from './constants'
 
@@ -10,7 +11,7 @@ export interface NormalizedProp extends SourceLocation {
   modifiers: string[]
 }
 
-export type Prop = ReturnType<typeof normalizeVueProps>[0]
+export type Prop = NormalizedProp
 
 // 缺省 logger 只兜底单测和直接调用 utils 的场景；插件运行时由 configResolved 换成 vite 解析后的实例，
 // 用户的 logLevel / customLogger 才能生效。多个 vite 实例共存时后解析的会覆盖前者。
@@ -27,8 +28,11 @@ export const logger = {
   },
 }
 
+// builtInPlatforms 的元素类型是平台字面量联合，对 string 查成员用 Set 避免 any 断言
+const builtInPlatformSet = new Set<string>(builtInPlatforms)
+
 export function hasPlatformModifier(modifiers: string[]): boolean {
-  return modifiers.some(m => builtInPlatforms.includes(m as any))
+  return modifiers.some(m => builtInPlatformSet.has(m))
 }
 
 export function normalizeVueProps(props: (AttributeNode | DirectiveNode)[]): NormalizedProp[] {
@@ -38,7 +42,7 @@ export function normalizeVueProps(props: (AttributeNode | DirectiveNode)[]): Nor
       name: '',
       modifiers: [] as string[],
     }
-    if (prop.type === 6) {
+    if (prop.type === NodeTypes.ATTRIBUTE) {
       const [originalName, ...modifiers] = prop.name.split('.')
       result.name = originalName
       result.modifiers = modifiers
@@ -52,7 +56,7 @@ export function normalizeVueProps(props: (AttributeNode | DirectiveNode)[]): Nor
 }
 
 export function getRootTemplate(ast: RootNode): ParentNode | undefined {
-  return ast.children.find((node): node is ElementNode => node.type === 1 && node.tag === 'template')
+  return ast.children.find((node): node is ElementNode => node.type === NodeTypes.ELEMENT && node.tag === 'template')
 }
 
 export function groupPropsByName(props: Prop[]): Record<string, Prop[]> {
@@ -70,18 +74,20 @@ export function hasMultiplePlatformProps(props: Prop[], id: string): void {
   logger.warn(`${id}:${first.start.line}:${first.start.column}-${last.end.column} 单一属性匹配到多个 ${platform} 平台的修饰符，使用 \`${first.source}\` `)
 }
 
+// 平台修饰符只会出现在点分段的末尾；前瞻防止误删以平台名开头但不是平台的段（如 `.h5x`、`.webview`），以及互为前缀的平台名（`app` vs `app-plus`）
+const platformModifierRegex = new RegExp(`\\.(?:${builtInPlatforms.join('|')})(?=\\.|$)`, 'gm')
+
 export function computedPropSource(platformSource = '', defaultSource: string = ''): string {
   let source = defaultSource
   if (platformSource) {
-    let [attr, ...value] = platformSource.split('=')
-    attr = attr.replace(new RegExp(`\\.${builtInPlatforms.join('|\\.')}`, 'gm'), '')
-    source = `${attr}${value.length ? '=' : ''}${value.join('=')}`
+    const [attr, ...value] = platformSource.split('=')
+    source = `${attr.replace(platformModifierRegex, '')}${value.length ? '=' : ''}${value.join('=')}`
   }
   return source
 }
 
 export function transformProps(node: ParentNode | TemplateChildNode, ms: MagicString, id: string): void {
-  if (node.type !== 1)
+  if (node.type !== NodeTypes.ELEMENT)
     return
 
   node.children.forEach(n => transformProps(n, ms, id))
