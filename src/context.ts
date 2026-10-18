@@ -1,5 +1,5 @@
+import type { SourceMap } from 'magic-string'
 import { parse } from '@vue/compiler-dom'
-
 import MagicString from 'magic-string'
 import { createFilter } from 'vite'
 import { getRootTemplate, transformProps } from './utils'
@@ -10,7 +10,10 @@ export class Context {
     this.filter = createFilter('**/*.?(nu)vue')
   }
 
-  transform(code: string, id: string) {
+  transform(code: string, id: string): {
+    code: string
+    map: SourceMap
+  } | undefined {
     const ast = parse(code)
     const templateNode = getRootTemplate(ast)
     if (!templateNode)

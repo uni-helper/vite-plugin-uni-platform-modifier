@@ -1,8 +1,13 @@
-import type { AttributeNode, DirectiveNode, ParentNode, RootNode, TemplateChildNode } from '@vue/compiler-core'
+import type { AttributeNode, DirectiveNode, ElementNode, ParentNode, RootNode, SourceLocation, TemplateChildNode } from '@vue/compiler-core'
 import type MagicString from 'magic-string'
 import { builtInPlatforms, platform } from '@uni-helper/uni-env'
 import { createLogger } from 'vite'
 import { pluginName } from './constants'
+
+export interface NormalizedProp extends SourceLocation {
+  name: string
+  modifiers: string[]
+}
 
 export type Prop = ReturnType<typeof normalizeVueProps>[0]
 
@@ -10,11 +15,11 @@ export const logger = createLogger(undefined, {
   prefix: pluginName,
 })
 
-export function hasPlatformModifier(modifiers: string[]) {
+export function hasPlatformModifier(modifiers: string[]): boolean {
   return modifiers.some(m => builtInPlatforms.includes(m as any))
 }
 
-export function normalizeVueProps(props: (AttributeNode | DirectiveNode)[]) {
+export function normalizeVueProps(props: (AttributeNode | DirectiveNode)[]): NormalizedProp[] {
   return props.map((prop) => {
     const result = {
       ...prop.loc,
@@ -34,18 +39,18 @@ export function normalizeVueProps(props: (AttributeNode | DirectiveNode)[]) {
   })
 }
 
-export function getRootTemplate(ast: RootNode) {
-  return ast.children.find(node => node.type === 1 && node.tag === 'template') as ParentNode
+export function getRootTemplate(ast: RootNode): ParentNode | undefined {
+  return ast.children.find((node): node is ElementNode => node.type === 1 && node.tag === 'template')
 }
 
-export function groupPropsByName(props: Prop[]) {
-  return props.reduce((acc, cur) => {
+export function groupPropsByName(props: Prop[]): Record<string, Prop[]> {
+  return props.reduce<Record<string, Prop[]>>((acc, cur) => {
     acc[cur.name] = acc[cur.name] ? [...acc[cur.name], cur] : [cur]
     return acc
-  }, {} as Record<string, typeof props[0][]>)
+  }, {})
 }
 
-export function hasMultiplePlatformProps(props: Prop[], id: string) {
+export function hasMultiplePlatformProps(props: Prop[], id: string): void {
   if (props.length < 1)
     return
   const first = props[0]
@@ -53,7 +58,7 @@ export function hasMultiplePlatformProps(props: Prop[], id: string) {
   logger.warn(`${id}:${first.start.line}:${first.start.column}-${last.end.column} 单一属性匹配到多个 ${platform} 平台的修饰符，使用 \`${first.source}\` `)
 }
 
-export function computedPropSource(platformSource = '', defaultSource: string = '') {
+export function computedPropSource(platformSource = '', defaultSource: string = ''): string {
   let source = defaultSource
   if (platformSource) {
     let [attr, ...value] = platformSource.split('=')
@@ -63,7 +68,7 @@ export function computedPropSource(platformSource = '', defaultSource: string = 
   return source
 }
 
-export function transformProps(node: ParentNode | TemplateChildNode, ms: MagicString, id: string) {
+export function transformProps(node: ParentNode | TemplateChildNode, ms: MagicString, id: string): void {
   if (node.type !== 1)
     return
 
