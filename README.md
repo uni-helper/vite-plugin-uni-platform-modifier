@@ -106,7 +106,9 @@ export default defineConfig({
 ```js
 [
   'app',
+  'app-android',
   'app-harmony',
+  'app-ios',
   'app-plus',
   'h5',
   'mp-360',

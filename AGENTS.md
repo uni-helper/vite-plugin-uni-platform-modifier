@@ -5,13 +5,13 @@
 ## 项目
 
 - **语言/模块**：TypeScript，`strict`（`tsconfig.json`）；根 `package.json` 就是发布包（`"type": "module"`），tsdown 构建到 `dist/`（esm + cjs + d.ts）。
-- **Node**：24（`.node-version`）。
-- **包管理器**：pnpm 10.33.4（根 `package.json` 的 `packageManager`）。依赖版本集中在 `pnpm-workspace.yaml` 的 `catalog:`，`package.json` 里一律写 `"catalog:"`，升依赖只改 catalog。
-- **测试**：vitest（`vitest.config.ts` 只配了 istanbul coverage），测试在根 `test/`，直接 import `src/`，不依赖 `dist`。
-- **Lint**：`@uni-helper/eslint-config`（flat config）；`.vscode/settings.json` 已提交（关 prettier，eslint 自动修复，风格规则静默）。
+- **Node**：26（`.node-version`，`package.json` 的 `devEngines` 同步声明）。
+- **包管理器**：pnpm 12.14.0（根 `package.json` 的 `packageManager`）。依赖版本集中在 `pnpm-workspace.yaml` 的 `catalog:`，`package.json` 里一律写 `"catalog:"`，升依赖只改 catalog。
+- **测试**：vitest（无 `vitest.config.ts`，coverage 用 `@vitest/coverage-v8`），测试在根 `test/`，直接 import `src/`，不依赖 `dist`。
+- **Lint**：`@antfu/eslint-config`（flat config）；`.vscode/settings.json` 已提交（关 prettier，eslint 自动修复，风格规则静默）。
 - **workspace**：只有 `playground`（示例 uni-app 应用，manifest 里的 name 是 `vitesse-uni-app`，从模板复制来的），`vite.config.ts` 直接 import `../src/index`，不经过 `dist`。
 - **peer 依赖**：`vite ^5.0.0`。
-- **平台来源**：可接受的修饰符 = `@uni-helper/uni-env` 导出的 `builtInPlatforms`（当前 19 个），当前平台 = 同包导出的 `platform`（即 `process.env.UNI_PLATFORM`）；插件里没有硬编码平台列表。
+- **平台来源**：可接受的修饰符 = `@uni-helper/uni-env` 导出的 `builtInPlatforms`（当前 21 个），当前平台 = 同包导出的 `platform`（即 `process.env.UNI_PLATFORM`）；插件里没有硬编码平台列表。
 
 ## 命令
 
@@ -27,9 +27,10 @@ pnpm dev
 
 # 检查
 pnpm test                       # vitest watch
-pnpm coverage                   # vitest run --coverage（istanbul）
+pnpm coverage                   # vitest run --coverage（coverage-v8）
 pnpm lint
 pnpm lint:fix
+pnpm typecheck                  # tsc --noEmit
 
 # playground（直接吃 src/，无需先 build）
 pnpm -C playground dev:h5
@@ -58,6 +59,6 @@ pnpm release                    # bumpp：改版本、提交、打 v* tag 并推
 
 - **提交信息**：Conventional Commits（`feat:` / `fix:` / `docs:` / `test:` / `chore:` …），破坏性变更加 `!` 或 `BREAKING CHANGE:`。
 - **测试方式**：测模板改写行为时在 `test/fixtures/` 加 `.vue` 样例，`context.test.ts` 会自动遍历并出快照；快照失败先人工确认新输出，再 `pnpm test -u`。
-- **CI**：push / PR 到 `main` 时跑 `build` → `type-check`，矩阵 ubuntu / macos / windows × Node 22 / 24 / 26。注意：根 `package.json` 目前没有 `type-check` 脚本，该步骤会失败（待修复）；本地等价检查用 `pnpm lint`、`pnpm test`。
+- **CI**：`ci.yml` 在 push / PR 到 `main` 时跑 build → lint → test → typecheck → playground h5 / mp-weixin 构建，矩阵 ubuntu / macos / windows × Node 22 / 24 / 26；本地等价检查用 `pnpm lint`、`pnpm typecheck`、`pnpm exec vitest run`。
 - **发布**：`pnpm release`（bumpp）→ tag 触发 `release.yml`：changelogithub 建 GitHub Release + `pnpm publish --access public`（`prepublishOnly` 先 build）。
 - **文档同步**：改脚本、插件行为或导出名时，同步更新 README、CONTRIBUTING 和本文件。
