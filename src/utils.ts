@@ -1,5 +1,6 @@
 import type { AttributeNode, DirectiveNode, ElementNode, ParentNode, RootNode, SourceLocation, TemplateChildNode } from '@vue/compiler-core'
 import type MagicString from 'magic-string'
+import type { Logger, LogOptions } from 'vite'
 import { builtInPlatforms, platform } from '@uni-helper/uni-env'
 import { createLogger } from 'vite'
 import { pluginName } from './constants'
@@ -11,9 +12,20 @@ export interface NormalizedProp extends SourceLocation {
 
 export type Prop = ReturnType<typeof normalizeVueProps>[0]
 
-export const logger = createLogger(undefined, {
-  prefix: pluginName,
-})
+// 缺省 logger 只兜底单测和直接调用 utils 的场景；插件运行时由 configResolved 换成 vite 解析后的实例，
+// 用户的 logLevel / customLogger 才能生效。多个 vite 实例共存时后解析的会覆盖前者。
+let loggerInstance: Logger = createLogger(undefined, { prefix: pluginName })
+
+export function setLogger(next: Logger): void {
+  loggerInstance = next
+}
+
+// 只转发插件实际用到的方法；常量门面让测试可以直接 spyOn(logger, 'warn')
+export const logger = {
+  warn(message: string, options?: LogOptions): void {
+    loggerInstance.warn(message, options)
+  },
+}
 
 export function hasPlatformModifier(modifiers: string[]): boolean {
   return modifiers.some(m => builtInPlatforms.includes(m as any))
@@ -58,14 +70,12 @@ export function hasMultiplePlatformProps(props: Prop[], id: string): void {
   logger.warn(`${id}:${first.start.line}:${first.start.column}-${last.end.column} 单一属性匹配到多个 ${platform} 平台的修饰符，使用 \`${first.source}\` `)
 }
 
-// 平台修饰符只会出现在点分段的末尾；前瞻防止误删以平台名开头但不是平台的段（如 `.h5x`、`.webview`），以及互为前缀的平台名（`app` vs `app-plus`）
-const platformModifierRegex = new RegExp(`\\.(?:${builtInPlatforms.join('|')})(?=\\.|$)`, 'gm')
-
 export function computedPropSource(platformSource = '', defaultSource: string = ''): string {
   let source = defaultSource
   if (platformSource) {
-    const [attr, ...value] = platformSource.split('=')
-    source = `${attr.replace(platformModifierRegex, '')}${value.length ? '=' : ''}${value.join('=')}`
+    let [attr, ...value] = platformSource.split('=')
+    attr = attr.replace(new RegExp(`\\.${builtInPlatforms.join('|\\.')}`, 'gm'), '')
+    source = `${attr}${value.length ? '=' : ''}${value.join('=')}`
   }
   return source
 }
