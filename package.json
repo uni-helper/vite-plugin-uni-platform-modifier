@@ -15,7 +15,7 @@
       "onFail": "warn"
     }
   },
-  "description": "",
+  "description": "Platform modifiers for uni-app template attributes and directives, resolved per UNI_PLATFORM at build time",
   "author": {
     "name": "kejunmao",
     "email": "kejun1997@gmail.com"
@@ -27,7 +27,18 @@
     "url": "git+https://github.com/uni-helper/vite-plugin-uni-platform-modifier.git"
   },
   "bugs": "https://github.com/uni-helper/vite-plugin-uni-platform-modifier/issues",
-  "keywords": [],
+  "keywords": [
+    "uni-app",
+    "uni",
+    "vite",
+    "vite-plugin",
+    "platform",
+    "modifier",
+    "attribute",
+    "directive",
+    "mp-weixin",
+    "h5"
+  ],
   "sideEffects": false,
   "exports": {
     ".": {
