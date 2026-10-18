@@ -2,7 +2,7 @@ import type { Plugin } from 'vite'
 import { pluginName } from './constants'
 import { Context } from './context'
 
-export function VitePluginUniPlatformVOnModifier(): Plugin {
+export function VitePluginUniPlatformModifier(): Plugin {
   const ctx = new Context()
   return {
     name: pluginName,
@@ -16,4 +16,4 @@ export function VitePluginUniPlatformVOnModifier(): Plugin {
   }
 }
 
-export default VitePluginUniPlatformVOnModifier
+export default VitePluginUniPlatformModifier
