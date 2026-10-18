@@ -58,12 +58,14 @@ export function hasMultiplePlatformProps(props: Prop[], id: string): void {
   logger.warn(`${id}:${first.start.line}:${first.start.column}-${last.end.column} 单一属性匹配到多个 ${platform} 平台的修饰符，使用 \`${first.source}\` `)
 }
 
+// 平台修饰符只会出现在点分段的末尾；前瞻防止误删以平台名开头但不是平台的段（如 `.h5x`、`.webview`），以及互为前缀的平台名（`app` vs `app-plus`）
+const platformModifierRegex = new RegExp(`\\.(?:${builtInPlatforms.join('|')})(?=\\.|$)`, 'gm')
+
 export function computedPropSource(platformSource = '', defaultSource: string = ''): string {
   let source = defaultSource
   if (platformSource) {
-    let [attr, ...value] = platformSource.split('=')
-    attr = attr.replace(new RegExp(`\\.${builtInPlatforms.join('|\\.')}`, 'gm'), '')
-    source = `${attr}${value.length ? '=' : ''}${value.join('=')}`
+    const [attr, ...value] = platformSource.split('=')
+    source = `${attr.replace(platformModifierRegex, '')}${value.length ? '=' : ''}${value.join('=')}`
   }
   return source
 }

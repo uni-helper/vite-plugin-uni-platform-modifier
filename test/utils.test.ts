@@ -148,4 +148,12 @@ describe('computedPropSource', () => {
   it('should return platformSource with replaced attribute and value when platformSource has multiple modifiers and values', () => {
     expect(computedPropSource('attr1.h5.mp-weixin=".app=.mp-weixin=.h5"')).toBe('attr1=".app=.mp-weixin=.h5"')
   })
+
+  it('should keep non-platform modifiers that merely start with a platform name', () => {
+    expect(computedPropSource('attr.h5x.h5="v"')).toBe('attr.h5x="v"')
+  })
+
+  it('should strip the longer platform when one platform name prefixes another', () => {
+    expect(computedPropSource('attr.app-plus.h5="v"')).toBe('attr="v"')
+  })
 })
