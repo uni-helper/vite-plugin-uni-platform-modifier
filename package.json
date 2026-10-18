@@ -2,9 +2,24 @@
   "name": "@uni-helper/vite-plugin-uni-platform-modifier",
   "type": "module",
   "version": "0.1.1",
-  "packageManager": "pnpm@10.33.4",
+  "packageManager": "pnpm@12.14.0",
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "26",
+      "onFail": "warn"
+    },
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.14.0",
+      "onFail": "warn"
+    }
+  },
   "description": "",
-  "author": "KeJun",
+  "author": {
+    "name": "kejunmao",
+    "email": "kejun1997@gmail.com"
+  },
   "license": "MIT",
   "homepage": "https://github.com/uni-helper/vite-plugin-uni-platform-modifier#readme",
   "repository": {
@@ -42,14 +57,18 @@
   ],
   "scripts": {
     "build": "tsdown",
+    "build:play:h5": "pnpm -C playground run build:h5",
+    "dev:play:h5": "pnpm -C playground run dev:h5",
+    "build:play:mp-weixin": "pnpm -C playground run build:mp-weixin",
+    "dev:play:mp-weixin": "pnpm -C playground run dev:mp-weixin",
     "dev": "tsdown --watch",
     "prepublishOnly": "pnpm build",
     "release": "bumpp",
-    "start": "esno src/index.ts",
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
     "vite": "^5.0.0"
@@ -58,16 +77,15 @@
     "@uni-helper/uni-env": "catalog:",
     "@vue/compiler-core": "catalog:",
     "@vue/compiler-dom": "catalog:",
-    "fast-glob": "catalog:",
     "magic-string": "catalog:"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "catalog:",
     "@types/node": "catalog:",
-    "@uni-helper/eslint-config": "catalog:",
-    "@vitest/coverage-istanbul": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
     "bumpp": "catalog:",
     "eslint": "catalog:",
-    "esno": "catalog:",
+    "fast-glob": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",

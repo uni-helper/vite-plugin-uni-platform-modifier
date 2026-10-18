@@ -1,8 +1,8 @@
 {
-  "name": "vitesse-uni-app",
+  "name": "playground",
   "version": "0.0.0",
   "private": true,
-  "packageManager": "pnpm@10.33.4",
+  "packageManager": "pnpm@12.14.0",
   "license": "MIT",
   "scripts": {
     "dev": "uni",
@@ -39,7 +39,7 @@
     "build:quickapp-webview": "uni build -p quickapp-webview",
     "build:quickapp-webview-huawei": "uni build -p quickapp-webview-huawei",
     "build:quickapp-webview-union": "uni build -p quickapp-webview-union",
-    "type-check": "vue-tsc --noEmit"
+    "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
     "@dcloudio/uni-app": "catalog:",
