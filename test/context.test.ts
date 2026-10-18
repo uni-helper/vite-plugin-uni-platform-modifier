@@ -40,6 +40,8 @@ describe('context', async () => {
       const code = readFileSync(file, 'utf-8')
       const id = file
       const result = ctx.transform(code, id)
+      // 插件回归到不输出时 result 会是 undefined，先断言存在，避免快照把 undefined 记成通过
+      expect(result).toBeDefined()
       expect(result?.code).toMatchSnapshot()
     })
   }

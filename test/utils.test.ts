@@ -3,6 +3,13 @@ import type { Prop } from '../src/utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { computedPropSource, getRootTemplate, groupPropsByName, hasMultiplePlatformProps, hasPlatformModifier, logger, normalizeVueProps } from '../src/utils'
 
+vi.mock('@uni-helper/uni-env', () => {
+  return {
+    platform: 'mp-weixin',
+    builtInPlatforms: ['h5', 'mp-weixin', 'app', 'app-plus'],
+  }
+})
+
 describe('hasPlatformModifier', () => {
   it('should return true when array includes a platform modifier', () => {
     const modifiers = ['modifier1', 'mp-weixin', 'modifier3']
@@ -124,7 +131,7 @@ describe('hasMultiplePlatformProps', () => {
 
     hasMultiplePlatformProps(props as any, id)
 
-    expect(spy).toHaveBeenCalledWith('testId:1:1-20 单一属性匹配到多个 undefined 平台的修饰符，使用 `prop1` ')
+    expect(spy).toHaveBeenCalledWith('testId:1:1-20 单一属性匹配到多个 mp-weixin 平台的修饰符，使用 `prop1` ')
   })
 })
 
