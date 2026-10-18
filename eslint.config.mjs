@@ -1,3 +1,9 @@
-import uniHelper from '@uni-helper/eslint-config'
+import antfu from '@antfu/eslint-config'
 
-export default uniHelper()
+export default antfu({
+  type: 'lib',
+  ignores: ['fixtures'],
+  rules: {
+    'pnpm/yaml-enforce-settings': 'off',
+  },
+})
