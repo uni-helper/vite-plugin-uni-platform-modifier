@@ -4,7 +4,6 @@ import type { Logger, LogOptions } from 'vite'
 import { builtInPlatforms, platform } from '@uni-helper/uni-env'
 import { NodeTypes } from '@vue/compiler-core'
 import { createLogger } from 'vite'
-import { pluginName } from './constants'
 
 export interface NormalizedProp extends SourceLocation {
   name: string
@@ -15,7 +14,7 @@ export type Prop = NormalizedProp
 
 // 缺省 logger 只兜底单测和直接调用 utils 的场景；插件运行时由 configResolved 换成 vite 解析后的实例，
 // 用户的 logLevel / customLogger 才能生效。多个 vite 实例共存时后解析的会覆盖前者。
-let loggerInstance: Logger = createLogger(undefined, { prefix: pluginName })
+let loggerInstance: Logger = createLogger(undefined)
 
 export function setLogger(next: Logger): void {
   loggerInstance = next
@@ -75,7 +74,7 @@ export function hasMultiplePlatformProps(props: Prop[], id: string): void {
 }
 
 // 平台修饰符只会出现在点分段的末尾；前瞻防止误删以平台名开头但不是平台的段（如 `.h5x`、`.webview`），以及互为前缀的平台名（`app` vs `app-plus`）
-const platformModifierRegex = new RegExp(`\\.(?:${builtInPlatforms.join('|')})(?=\\.|$)`, 'gm')
+const platformModifierRegex = new RegExp(`\\.(?:${builtInPlatforms.join('|')})(?=\\.|$)`, 'g')
 
 export function computedPropSource(platformSource = '', defaultSource: string = ''): string {
   let source = defaultSource
