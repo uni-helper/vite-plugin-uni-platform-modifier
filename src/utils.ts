@@ -4,6 +4,7 @@ import type { Logger, LogOptions } from 'vite'
 import { builtInPlatforms, platform } from '@uni-helper/uni-env'
 import { NodeTypes } from '@vue/compiler-core'
 import { createLogger } from 'vite'
+import { pluginName } from './constants'
 
 export interface NormalizedProp extends SourceLocation {
   name: string
@@ -14,7 +15,7 @@ export type Prop = NormalizedProp
 
 // 缺省 logger 只兜底单测和直接调用 utils 的场景；插件运行时由 configResolved 换成 vite 解析后的实例，
 // 用户的 logLevel / customLogger 才能生效。多个 vite 实例共存时后解析的会覆盖前者。
-let loggerInstance: Logger = createLogger(undefined)
+let loggerInstance: Logger = createLogger(undefined, { prefix: pluginName })
 
 export function setLogger(next: Logger): void {
   loggerInstance = next
