@@ -78,7 +78,7 @@ vite-plugin-uni-platform-modifier/
 
 - 一个 PR 解决一个问题，不要夹带无关改动。
 - 提 PR 前在本地跑一遍 `pnpm build`、`pnpm lint`、`pnpm typecheck`、`pnpm test`。
-- CI（`.github/workflows/ci.yml`）在 push 和 PR 到 `main` 时运行，矩阵为 ubuntu / macos / windows × Node 22 / 24 / 26。
+- CI（`.github/workflows/ci.yml`）在 push / PR 到 `main` 及 merge group 时运行，矩阵为 ubuntu / macos / windows × Node 22 / 24 / 26。
 - 改动插件行为、导出名或支持的修饰符时，同步更新 README。
 - 新增插件选项、重构模块这类改动，先开 issue 讨论方案再动手。
 
@@ -87,7 +87,7 @@ vite-plugin-uni-platform-modifier/
 仅维护者操作：
 
 1. `pnpm release` 调用 `bumpp`，更新根 `package.json` 的版本号，并提交、打 `v*` tag、推送。
-2. tag 推送后 `.github/workflows/release.yml` 触发：用 changelogithub 生成 GitHub Release，再 `pnpm publish --access public` 发布到 npm（`prepublishOnly` 会先自动执行 `pnpm build`）。
+2. tag 推送后 `.github/workflows/release.yml` 触发：用 changelogithub 生成 GitHub Release，再 `pnpm publish --access public` 发布到 npm（`prepublishOnly` 会先自动执行 `pnpm build`）。发布通过 npm trusted publishing（OIDC）鉴权：需要先在 npmjs.com 的包设置里把本仓库的 release 工作流登记为可信发布者，未配置时 publish 会因缺少权限失败。
 
 ## 行为准则
 

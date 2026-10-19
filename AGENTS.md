@@ -59,6 +59,6 @@ pnpm release                    # bumpp：改版本、提交、打 v* tag 并推
 
 - **提交信息**：Conventional Commits（`feat:` / `fix:` / `docs:` / `test:` / `chore:` …），破坏性变更加 `!` 或 `BREAKING CHANGE:`。
 - **测试方式**：测模板改写行为时在 `test/fixtures/` 加 `.vue` 样例，`context.test.ts` 会自动遍历并出快照；快照失败先人工确认新输出，再 `pnpm test -u`。
-- **CI**：`ci.yml` 在 push / PR 到 `main` 时跑 build → lint → test → typecheck → playground h5 / mp-weixin 构建，矩阵 ubuntu / macos / windows × Node 22 / 24 / 26；本地等价检查用 `pnpm lint`、`pnpm typecheck`、`pnpm exec vitest run`。
-- **发布**：`pnpm release`（bumpp）→ tag 触发 `release.yml`：changelogithub 建 GitHub Release + `pnpm publish --access public`（`prepublishOnly` 先 build）。
+- **CI**：`ci.yml` 在 push / PR 到 `main` 及 merge group 时跑 build → lint → test → typecheck → playground h5 / mp-weixin 构建，矩阵 ubuntu / macos / windows × Node 22 / 24 / 26；本地等价检查用 `pnpm lint`、`pnpm typecheck`、`pnpm exec vitest run`。
+- **发布**：`pnpm release`（bumpp）→ tag 触发 `release.yml`：changelogithub 建 GitHub Release + `pnpm publish --access public`（`prepublishOnly` 先 build）。发布走 npm trusted publishing（OIDC），前提是 npmjs.com 包设置里已登记本仓库的 release 工作流为可信发布者。
 - **文档同步**：改脚本、插件行为或导出名时，同步更新 README、CONTRIBUTING 和本文件。
