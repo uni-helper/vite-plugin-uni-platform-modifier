@@ -161,15 +161,15 @@ describe('hasMultiplePlatformProps', () => {
 
   it('should log a warning if the props array has more than one element', () => {
     const props = [
-      { start: { line: 1, column: 1 }, end: { column: 10 }, source: 'prop1' },
-      { start: { line: 2, column: 1 }, end: { column: 20 }, source: 'prop2' },
+      { start: { line: 1, column: 1 }, end: { line: 1, column: 10 }, source: 'prop1' },
+      { start: { line: 2, column: 1 }, end: { line: 2, column: 20 }, source: 'prop2' },
     ]
     const id = 'testId'
     const spy = vi.spyOn(logger, 'warn')
 
     hasMultiplePlatformProps(props as any, id)
 
-    expect(spy).toHaveBeenCalledWith('testId:1:1-20 同一属性匹配到多个当前平台的修饰符，使用 `prop1`')
+    expect(spy).toHaveBeenCalledWith('testId:1:1-2:20 同一属性匹配到多个当前平台的修饰符，使用 `prop1`')
   })
 })
 
@@ -191,14 +191,14 @@ describe('hasMultipleDefaultProps', () => {
 
   it('should log a warning if multiple default props exist', () => {
     const props = [
-      { start: { line: 1, column: 1 }, end: { column: 10 }, source: 'class="a"' },
-      { start: { line: 2, column: 1 }, end: { column: 20 }, source: 'class.foo="b"' },
+      { start: { line: 1, column: 1 }, end: { line: 1, column: 10 }, source: 'class="a"' },
+      { start: { line: 2, column: 1 }, end: { line: 2, column: 20 }, source: 'class.foo="b"' },
     ]
     const spy = vi.spyOn(logger, 'warn')
 
     hasMultipleDefaultProps(props as any, 'testId')
 
-    expect(spy).toHaveBeenCalledWith('testId:1:1-20 同一属性存在多个默认值，使用 `class="a"`')
+    expect(spy).toHaveBeenCalledWith('testId:1:1-2:20 同一属性存在多个默认值，使用 `class="a"`')
   })
 })
 

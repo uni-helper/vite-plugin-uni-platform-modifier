@@ -28,12 +28,12 @@ describe('plugin', () => {
     configResolved({ logger: resolvedLogger })
 
     const props = [
-      { start: { line: 1, column: 1 }, end: { column: 10 }, source: 'prop1' },
-      { start: { line: 2, column: 1 }, end: { column: 20 }, source: 'prop2' },
+      { start: { line: 1, column: 1 }, end: { line: 1, column: 10 }, source: 'prop1' },
+      { start: { line: 2, column: 1 }, end: { line: 2, column: 20 }, source: 'prop2' },
     ]
     hasMultiplePlatformProps(props as any, 'testId')
 
     expect(resolvedLogger.warn).toHaveBeenCalledTimes(1)
-    expect(resolvedLogger.warn).toHaveBeenCalledWith('testId:1:1-20 同一属性匹配到多个当前平台的修饰符，使用 `prop1`', undefined)
+    expect(resolvedLogger.warn).toHaveBeenCalledWith('[vite-plugin-uni-platform-modifier] testId:1:1-2:20 同一属性匹配到多个当前平台的修饰符，使用 `prop1`', undefined)
   })
 })

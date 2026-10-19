@@ -15,7 +15,7 @@ export type Prop = NormalizedProp
 
 // 缺省 logger 只兜底单测和直接调用 utils 的场景；插件运行时由 configResolved 换成 vite 解析后的实例，
 // 用户的 logLevel / customLogger 才能生效。多个 vite 实例共存时后解析的会覆盖前者。
-let loggerInstance: Logger = createLogger(undefined, { prefix: pluginName })
+let loggerInstance: Logger = createLogger()
 
 export function setLogger(next: Logger): void {
   loggerInstance = next
@@ -24,7 +24,7 @@ export function setLogger(next: Logger): void {
 // 只转发插件实际用到的方法；常量门面让测试可以直接 spyOn(logger, 'warn')
 export const logger = {
   warn(message: string, options?: LogOptions): void {
-    loggerInstance.warn(message, options)
+    loggerInstance.warn(`[${pluginName}] ${message}`, options)
   },
 }
 
@@ -109,7 +109,7 @@ function warnForMultipleProps(props: Prop[], id: string, reason: string): void {
     return
   const first = props[0]
   const last = props[props.length - 1]
-  logger.warn(`${id}:${first.start.line}:${first.start.column}-${last.end.column} 同一属性${reason}，使用 \`${first.source}\``)
+  logger.warn(`${id}:${first.start.line}:${first.start.column}-${last.end.line}:${last.end.column} 同一属性${reason}，使用 \`${first.source}\``)
 }
 
 export function hasMultiplePlatformProps(props: Prop[], id: string): void {
