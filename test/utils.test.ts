@@ -121,6 +121,17 @@ describe('hasMultiplePlatformProps', () => {
     expect(spy).not.toHaveBeenCalled()
   })
 
+  it('should not log a warning for a single platform prop', () => {
+    const props = [
+      { start: { line: 1, column: 1 }, end: { column: 10 }, source: 'prop1' },
+    ]
+    const spy = vi.spyOn(logger, 'warn')
+
+    hasMultiplePlatformProps(props as any, 'testId')
+
+    expect(spy).not.toHaveBeenCalled()
+  })
+
   it('should log a warning if the props array has more than one element', () => {
     const props = [
       { start: { line: 1, column: 1 }, end: { column: 10 }, source: 'prop1' },

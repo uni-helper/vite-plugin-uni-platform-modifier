@@ -67,7 +67,7 @@ export function groupPropsByName(props: Prop[]): Record<string, Prop[]> {
 }
 
 export function hasMultiplePlatformProps(props: Prop[], id: string): void {
-  if (props.length < 1)
+  if (props.length < 2)
     return
   const first = props[0]
   const last = props[props.length - 1]
