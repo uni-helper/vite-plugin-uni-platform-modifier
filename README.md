@@ -1,7 +1,9 @@
+<a href="https://uni-helper.js.org/vite-plugin-uni-platform-modifier"><img src="https://cdn.jsdelivr.net/gh/uni-helper/vite-plugin-uni-platform-modifier@main/banner.svg" alt="banner" width="100%"/></a>
+
 # vite-plugin-uni-platform-modifier
 
 <p align="center">
-  <img src="./logo.svg" alt="logo" width="256" height="256"/>
+  <img src="https://cdn.jsdelivr.net/gh/uni-helper/vite-plugin-uni-platform-modifier@main/logo.svg" alt="logo" width="256" height="256"/>
 </p>
 
 <p align="center">
