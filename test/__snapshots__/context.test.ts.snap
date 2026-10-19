@@ -1,5 +1,17 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`context > should transform directiveNested.vue 1`] = `
+"<template>
+  <view  @click="onDefaultClick">
+    <text  v-text="'platform'" />
+    <button  :disabled="true">
+      <text  class="default-class">label</text>
+    </button>
+  </view>
+</template>
+"
+`;
+
 exports[`context > should transform fullAttr.vue 1`] = `
 "<template>
   <div  is-link="true"  />
