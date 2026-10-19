@@ -7,7 +7,7 @@
 - **语言/模块**：TypeScript，`strict`（`tsconfig.json`）；根 `package.json` 就是发布包（`"type": "module"`），tsdown 构建到 `dist/`（esm + cjs + d.ts）。
 - **Node**：26（`.node-version`，`package.json` 的 `devEngines` 同步声明）。
 - **包管理器**：pnpm 12.14.0（根 `package.json` 的 `packageManager`）。依赖版本集中在 `pnpm-workspace.yaml` 的 `catalog:`，`package.json` 里一律写 `"catalog:"`，升依赖只改 catalog。
-- **测试**：vitest（无 `vitest.config.ts`，coverage 用 `@vitest/coverage-v8`），测试在根 `test/`，直接 import `src/`，不依赖 `dist`。
+- **测试**：vitest，`vitest.config.ts` 把 coverage 限定在 `src/**`（provider 为 `v8`），测试在根 `test/`，直接 import `src/`，不依赖 `dist`。
 - **Lint**：`@antfu/eslint-config`（flat config）；`.vscode/settings.json` 已提交（关 prettier，eslint 自动修复，风格规则静默）。
 - **workspace**：只有 `playground`（示例 uni-app 应用，manifest 里的 name 是 `vitesse-uni-app`，从模板复制来的），`vite.config.ts` 直接 import `../src/index`，不经过 `dist`。
 - **peer 依赖**：`vite ^5.0.0`。
