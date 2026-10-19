@@ -8,6 +8,9 @@ vi.mock('@uni-helper/uni-env', () => {
   return {
     platform: 'mp-weixin',
     builtInPlatforms: ['h5', 'web', 'mp-weixin', 'app', 'app-plus'],
+    appPlatform: undefined,
+    utsPlatform: undefined,
+    subPlatform: undefined,
   }
 })
 

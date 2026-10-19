@@ -11,7 +11,7 @@
 - **Lint**：`@antfu/eslint-config`（flat config）；`.vscode/settings.json` 已提交（关 prettier，eslint 自动修复，风格规则静默）。
 - **workspace**：只有 `playground`（示例 uni-app 应用，manifest 里的 name 是 `vitesse-uni-app`，从模板复制来的），`vite.config.ts` 直接 import `../src/index`，不经过 `dist`。
 - **peer 依赖**：`vite ^5.0.0`。
-- **平台来源**：可接受的修饰符 = `@uni-helper/uni-env` 导出的 `builtInPlatforms`（当前 21 个），当前平台 = 同包导出的 `platform`（即 `process.env.UNI_PLATFORM`）；插件里没有硬编码平台列表。
+- **平台来源**：可接受的修饰符 = `@uni-helper/uni-env` 导出的 `builtInPlatforms`（当前 21 个）；当前平台标识取 `platform`（`UNI_PLATFORM`），并参考 `appPlatform`（`UNI_APP_PLATFORM`）、`utsPlatform`（`UNI_UTS_PLATFORM`）、`subPlatform`（`UNI_SUB_PLATFORM`），`h5`/`web` 互为别名；插件里没有硬编码平台列表。
 
 ## 命令
 
@@ -53,7 +53,7 @@ pnpm release                    # bumpp：改版本、提交、打 v* tag 并推
 | `test/` | 单元测试 + fixture 驱动的快照测试（mock 掉 `@uni-helper/uni-env` 固定平台） |
 | `playground/` | 示例 uni-app 应用 |
 
-`transformProps` 的选择规则（`src/utils.ts`）：属性名连同平台修饰符归一化后**按属性名分组**；每组先整组从源码移除，再选出"修饰符含当前平台"的第一条（命中多条则输出警告并取第一条，`computedPropSource` 负责剥掉平台修饰符），把最终值 `overwrite` 回"无修饰符默认属性"的位置——没有默认属性时写回平台属性的位置。输出里属性的位置由保留下来的那条决定。
+`transformProps` 的选择规则（`src/utils.ts`）：属性名连同平台修饰符归一化后**按属性名分组**；每组先整组从源码移除，再选出"修饰符命中任一当前平台标识"的第一条（命中多条则输出警告并取第一条，`computedPropSource` 负责剥掉平台修饰符），把最终值 `overwrite` 回"无修饰符默认属性"的位置——没有默认属性时写回平台属性的位置。输出里属性的位置由保留下来的那条决定。
 
 ## 约定
 

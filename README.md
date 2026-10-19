@@ -137,7 +137,7 @@ import { VitePluginUniPlatformModifier } from '@uni-helper/vite-plugin-uni-platf
 ]
 ```
 
-同一属性命中多个当前平台修饰符时，使用第一个并在构建时输出警告。
+匹配依据是当前构建的平台标识：`UNI_PLATFORM`；App 端还会参考 `UNI_APP_PLATFORM`/`UNI_UTS_PLATFORM`，快应用参考 `UNI_SUB_PLATFORM`。`h5` 与 `web` 视为同一个浏览器目标，写任意一个都会生效；其余平台名按值精确匹配。同一属性命中多个当前平台修饰符时，使用第一个并在构建时输出警告。
 
 ## 参与贡献
 

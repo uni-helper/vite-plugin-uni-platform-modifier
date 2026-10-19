@@ -1,12 +1,15 @@
 import type { TemplateNode } from '@vue/compiler-core'
 import type { Prop } from '../src/utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { computedPropSource, getRootTemplate, groupPropsByName, hasMultiplePlatformProps, hasPlatformModifier, logger, normalizeVueProps } from '../src/utils'
+import { computedPropSource, createActivePlatforms, getRootTemplate, groupPropsByName, hasMultiplePlatformProps, hasPlatformModifier, logger, matchesPlatform, normalizeVueProps } from '../src/utils'
 
 vi.mock('@uni-helper/uni-env', () => {
   return {
     platform: 'mp-weixin',
     builtInPlatforms: ['h5', 'web', 'mp-weixin', 'app', 'app-plus'],
+    appPlatform: undefined,
+    utsPlatform: undefined,
+    subPlatform: undefined,
   }
 })
 
@@ -21,6 +24,30 @@ describe('hasPlatformModifier', () => {
     const modifiers = ['modifier1', 'modifier2', 'modifier3']
     const result = hasPlatformModifier(modifiers)
     expect(result).toBe(false)
+  })
+})
+
+describe('createActivePlatforms', () => {
+  it('should treat h5 and web as the same browser target', () => {
+    expect(createActivePlatforms({ platform: 'h5' })).toEqual(new Set(['h5', 'web']))
+    expect(createActivePlatforms({ platform: 'web' })).toEqual(new Set(['h5', 'web']))
+  })
+
+  it('should include the app target from UNI_APP_PLATFORM and UNI_UTS_PLATFORM', () => {
+    const active = createActivePlatforms({ platform: 'app', appPlatform: 'android', utsPlatform: 'app-android' })
+    expect(active).toEqual(new Set(['app', 'app-android']))
+  })
+
+  it('should include quickapp sub platforms', () => {
+    const active = createActivePlatforms({ platform: 'quickapp-webview', subPlatform: 'quickapp-webview-huawei' })
+    expect(active).toEqual(new Set(['quickapp-webview', 'quickapp-webview-huawei']))
+  })
+})
+
+describe('matchesPlatform', () => {
+  it('should match the mocked current platform', () => {
+    expect(matchesPlatform(['mp-weixin'])).toBe(true)
+    expect(matchesPlatform(['h5'])).toBe(false)
   })
 })
 
@@ -142,7 +169,7 @@ describe('hasMultiplePlatformProps', () => {
 
     hasMultiplePlatformProps(props as any, id)
 
-    expect(spy).toHaveBeenCalledWith('testId:1:1-20 单一属性匹配到多个 mp-weixin 平台的修饰符，使用 `prop1` ')
+    expect(spy).toHaveBeenCalledWith('testId:1:1-20 同一属性匹配到多个当前平台的修饰符，使用 `prop1`')
   })
 })
 

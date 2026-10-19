@@ -1,7 +1,7 @@
 import type { AttributeNode, DirectiveNode, ElementNode, ParentNode, RootNode, SourceLocation, TemplateChildNode } from '@vue/compiler-core'
 import type MagicString from 'magic-string'
 import type { Logger, LogOptions } from 'vite'
-import { builtInPlatforms, platform } from '@uni-helper/uni-env'
+import { appPlatform, builtInPlatforms, platform, subPlatform, utsPlatform } from '@uni-helper/uni-env'
 import { NodeTypes } from '@vue/compiler-core'
 import { createLogger } from 'vite'
 import { pluginName } from './constants'
@@ -31,8 +31,46 @@ export const logger = {
 // builtInPlatforms 的元素类型是平台字面量联合，对 string 查成员用 Set 避免 any 断言
 const builtInPlatformSet = new Set<string>(builtInPlatforms)
 
+export interface PlatformEnv {
+  platform?: string
+  appPlatform?: string
+  utsPlatform?: string
+  subPlatform?: string
+}
+
+/**
+ * 收集当前构建实际对应的平台标识。
+ *
+ * uni-app x 的 App 构建里 `UNI_PLATFORM` 是 `app`，android/ios 写在
+ * `UNI_APP_PLATFORM`/`UNI_UTS_PLATFORM`；快应用子平台写在 `UNI_SUB_PLATFORM`。
+ * 只看 `UNI_PLATFORM` 会把这些修饰符当成其它平台删掉。
+ */
+export function createActivePlatforms(env: PlatformEnv): Set<string> {
+  const active = new Set<string>()
+  if (env.platform)
+    active.add(env.platform)
+  if (env.appPlatform)
+    active.add(`app-${env.appPlatform}`)
+  if (env.utsPlatform)
+    active.add(env.utsPlatform)
+  if (env.subPlatform)
+    active.add(env.subPlatform)
+  // uni-env 的 isH5 同时判断 h5 和 web，两者是同一类浏览器目标
+  if (active.has('h5') || active.has('web')) {
+    active.add('h5')
+    active.add('web')
+  }
+  return active
+}
+
+const activePlatforms = createActivePlatforms({ platform, appPlatform, utsPlatform, subPlatform })
+
 export function hasPlatformModifier(modifiers: string[]): boolean {
   return modifiers.some(m => builtInPlatformSet.has(m))
+}
+
+export function matchesPlatform(modifiers: string[]): boolean {
+  return modifiers.some(m => activePlatforms.has(m))
 }
 
 export function normalizeVueProps(props: (AttributeNode | DirectiveNode)[]): NormalizedProp[] {
@@ -71,7 +109,7 @@ export function hasMultiplePlatformProps(props: Prop[], id: string): void {
     return
   const first = props[0]
   const last = props[props.length - 1]
-  logger.warn(`${id}:${first.start.line}:${first.start.column}-${last.end.column} 单一属性匹配到多个 ${platform} 平台的修饰符，使用 \`${first.source}\` `)
+  logger.warn(`${id}:${first.start.line}:${first.start.column}-${last.end.column} 同一属性匹配到多个当前平台的修饰符，使用 \`${first.source}\``)
 }
 
 // 平台修饰符只会出现在点分段的末尾；前瞻防止误删以平台名开头但不是平台的段（如 `.h5x`、`.webview`），以及互为前缀的平台名（`app` vs `app-plus`）
@@ -102,7 +140,7 @@ export function transformProps(node: ParentNode | TemplateChildNode, ms: MagicSt
     const group = groups[name]
     group.forEach(v => ms.remove(v.start.offset, v.end.offset))
     const defaultProp = group.find(v => v.modifiers.length === 0 || !hasPlatformModifier(v.modifiers))
-    const platformProps = group.filter(v => hasPlatformModifier(v.modifiers) && v.modifiers.includes(platform))
+    const platformProps = group.filter(v => hasPlatformModifier(v.modifiers) && matchesPlatform(v.modifiers))
     const platformProp = platformProps[0]
     hasMultiplePlatformProps(platformProps, id)
 

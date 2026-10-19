@@ -6,6 +6,9 @@ vi.mock('@uni-helper/uni-env', () => {
   return {
     platform: 'mp-weixin',
     builtInPlatforms: ['h5', 'web', 'mp-weixin', 'app', 'app-plus'],
+    appPlatform: undefined,
+    utsPlatform: undefined,
+    subPlatform: undefined,
   }
 })
 
@@ -31,6 +34,6 @@ describe('plugin', () => {
     hasMultiplePlatformProps(props as any, 'testId')
 
     expect(resolvedLogger.warn).toHaveBeenCalledTimes(1)
-    expect(resolvedLogger.warn).toHaveBeenCalledWith('testId:1:1-20 单一属性匹配到多个 mp-weixin 平台的修饰符，使用 `prop1` ', undefined)
+    expect(resolvedLogger.warn).toHaveBeenCalledWith('testId:1:1-20 同一属性匹配到多个当前平台的修饰符，使用 `prop1`', undefined)
   })
 })
