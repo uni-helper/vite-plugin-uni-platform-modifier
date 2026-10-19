@@ -27,6 +27,7 @@ export class Context {
         code: ms.toString(),
         map: ms.generateMap({
           file: id,
+          source: id,
         }),
       }
     }

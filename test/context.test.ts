@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs'
-import { relative, resolve } from 'node:path'
+import { basename, relative, resolve } from 'node:path'
 import fg from 'fast-glob'
 import { describe, expect, it, vi } from 'vitest'
 import { Context } from '../src/context'
@@ -45,6 +45,8 @@ describe('context', async () => {
       const result = ctx.transform(code, id)
       // 插件回归到不输出时 result 会是 undefined，先断言存在，避免快照把 undefined 记成通过
       expect(result).toBeDefined()
+      expect(result?.map.file).toBe(basename(id))
+      expect(result?.map.sources).toEqual([basename(id)])
       expect(result?.code).toMatchSnapshot()
     })
   }
