@@ -104,12 +104,20 @@ export function groupPropsByName(props: Prop[]): Record<string, Prop[]> {
   }, {})
 }
 
-export function hasMultiplePlatformProps(props: Prop[], id: string): void {
+function warnForMultipleProps(props: Prop[], id: string, reason: string): void {
   if (props.length < 2)
     return
   const first = props[0]
   const last = props[props.length - 1]
-  logger.warn(`${id}:${first.start.line}:${first.start.column}-${last.end.column} 同一属性匹配到多个当前平台的修饰符，使用 \`${first.source}\``)
+  logger.warn(`${id}:${first.start.line}:${first.start.column}-${last.end.column} 同一属性${reason}，使用 \`${first.source}\``)
+}
+
+export function hasMultiplePlatformProps(props: Prop[], id: string): void {
+  warnForMultipleProps(props, id, '匹配到多个当前平台的修饰符')
+}
+
+export function hasMultipleDefaultProps(props: Prop[], id: string): void {
+  warnForMultipleProps(props, id, '存在多个默认值')
 }
 
 // 平台修饰符只会出现在点分段的末尾；前瞻防止误删以平台名开头但不是平台的段（如 `.h5x`、`.webview`），以及互为前缀的平台名（`app` vs `app-plus`）
@@ -139,9 +147,11 @@ export function transformProps(node: ParentNode | TemplateChildNode, ms: MagicSt
   Object.keys(groups).forEach((name) => {
     const group = groups[name]
     group.forEach(v => ms.remove(v.start.offset, v.end.offset))
-    const defaultProp = group.find(v => v.modifiers.length === 0 || !hasPlatformModifier(v.modifiers))
+    const defaultProps = group.filter(v => v.modifiers.length === 0 || !hasPlatformModifier(v.modifiers))
+    const defaultProp = defaultProps[0]
     const platformProps = group.filter(v => hasPlatformModifier(v.modifiers) && matchesPlatform(v.modifiers))
     const platformProp = platformProps[0]
+    hasMultipleDefaultProps(defaultProps, id)
     hasMultiplePlatformProps(platformProps, id)
 
     const resultSource = computedPropSource(platformProp?.source, defaultProp?.source)

@@ -1,7 +1,7 @@
 import type { TemplateNode } from '@vue/compiler-core'
 import type { Prop } from '../src/utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { computedPropSource, createActivePlatforms, getRootTemplate, groupPropsByName, hasMultiplePlatformProps, hasPlatformModifier, logger, matchesPlatform, normalizeVueProps } from '../src/utils'
+import { computedPropSource, createActivePlatforms, getRootTemplate, groupPropsByName, hasMultipleDefaultProps, hasMultiplePlatformProps, hasPlatformModifier, logger, matchesPlatform, normalizeVueProps } from '../src/utils'
 
 vi.mock('@uni-helper/uni-env', () => {
   return {
@@ -170,6 +170,35 @@ describe('hasMultiplePlatformProps', () => {
     hasMultiplePlatformProps(props as any, id)
 
     expect(spy).toHaveBeenCalledWith('testId:1:1-20 同一属性匹配到多个当前平台的修饰符，使用 `prop1`')
+  })
+})
+
+describe('hasMultipleDefaultProps', () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  it('should not log a warning for a single default prop', () => {
+    const props = [
+      { start: { line: 1, column: 1 }, end: { column: 10 }, source: 'class="a"' },
+    ]
+    const spy = vi.spyOn(logger, 'warn')
+
+    hasMultipleDefaultProps(props as any, 'testId')
+
+    expect(spy).not.toHaveBeenCalled()
+  })
+
+  it('should log a warning if multiple default props exist', () => {
+    const props = [
+      { start: { line: 1, column: 1 }, end: { column: 10 }, source: 'class="a"' },
+      { start: { line: 2, column: 1 }, end: { column: 20 }, source: 'class.foo="b"' },
+    ]
+    const spy = vi.spyOn(logger, 'warn')
+
+    hasMultipleDefaultProps(props as any, 'testId')
+
+    expect(spy).toHaveBeenCalledWith('testId:1:1-20 同一属性存在多个默认值，使用 `class="a"`')
   })
 })
 
