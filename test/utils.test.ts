@@ -6,7 +6,7 @@ import { computedPropSource, getRootTemplate, groupPropsByName, hasMultiplePlatf
 vi.mock('@uni-helper/uni-env', () => {
   return {
     platform: 'mp-weixin',
-    builtInPlatforms: ['h5', 'mp-weixin', 'app', 'app-plus'],
+    builtInPlatforms: ['h5', 'web', 'mp-weixin', 'app', 'app-plus'],
   }
 })
 
@@ -173,5 +173,13 @@ describe('computedPropSource', () => {
 
   it('should strip the longer platform when one platform name prefixes another', () => {
     expect(computedPropSource('attr.app-plus.h5="v"')).toBe('attr="v"')
+  })
+
+  it('should strip the bare web platform modifier', () => {
+    expect(computedPropSource('attr.web="v"')).toBe('attr="v"')
+  })
+
+  it('should keep a non-platform modifier that starts with the web platform name', () => {
+    expect(computedPropSource('attr.webview.web="v"')).toBe('attr.webview="v"')
   })
 })
