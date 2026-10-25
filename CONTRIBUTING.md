@@ -51,13 +51,14 @@ pnpm -C playground dev:mp-weixin
 
 ```shell
 test/
+├── index.test.ts     插件入口与 hasMultiplePlatformProps 的单元测试
 ├── utils.test.ts     src/utils.ts 各工具函数的单元测试
 ├── context.test.ts   transform 端到端测试：遍历 fixtures/*.vue 生成快照
 ├── fixtures/         模板样例（*.vue）
 └── __snapshots__/    快照文件
 ```
 
-两个测试文件都通过 `vi.mock` 固定 `@uni-helper/uni-env`（platform 固定为 mp-weixin），测试结果与真实 `UNI_PLATFORM` 无关。插件输出变化导致快照失败时，先确认新输出正确，再运行 `pnpm test -u` 更新快照。
+三个测试文件都通过 `vi.mock` 固定 `@uni-helper/uni-env`（platform 固定为 mp-weixin），测试结果与真实 `UNI_PLATFORM` 无关。插件输出变化导致快照失败时，先确认新输出正确，再运行 `pnpm test -u` 更新快照。
 
 ## 项目结构
 
